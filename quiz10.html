@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulazione Concorso Operatore Socio Sanitario - Modulo 20</title>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
+            margin: 0;
+            padding: 20px;
+            color: #f0f0f0;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 2.5em;
+            color: #ffd700;
+            text-shadow: 0 0 10px #ffd700, 0 0 20px #ffd700;
+            animation: glow 2s infinite alternate;
+        }
+
+        @keyframes glow {
+            from { text-shadow: 0 0 10px #ffd700, 0 0 20px #ffd700; }
+            to { text-shadow: 0 0 20px #ffd700, 0 0 30px #ffd700; }
+        }
+
+        #timer {
+            text-align: center;
+            margin: 20px 0;
+            font-size: 1.5em;
+            color: #00eaff;
+            text-shadow: 0 0 5px #00eaff;
+        }
+
+        .question-nav {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .question-box {
+            width: 40px;
+            height: 40px;
+            margin: 8px;
+            background: linear-gradient(45deg, #333, #555);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            color: #fff;
+            font-weight: bold;
+        }
+
+        .question-box:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 15px #ffd700;
+        }
+
+        .question-box.answered {
+            background: linear-gradient(45deg, #ffd700, #ffaa00);
+            box-shadow: 0 0 15px #ffd700;
+        }
+
+        .question {
+            margin-bottom: 20px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .question.active {
+            display: block;
+        }
+
+        .question h3 {
+            margin: 0 0 15px 0;
+            color: #ffffff;
+            font-size: 1.6em;
+            text-shadow: 0 0 3px rgba(255, 255, 255, 0.5);
+            line-height: 1.4;
+        }
+
+        .option {
+            margin: 10px 0;
+            padding: 12px;
+            display: flex;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.25);
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            color: #ffffff;
+            font-size: 1.2em;
+            font-weight: 500;
+        }
+
+        .option:hover {
+            background: rgba(255, 255, 255, 0.35);
+            transform: translateX(5px);
+        }
+
+        .option.correct {
+            background: linear-gradient(90deg, #00eaff, #00b8d4);
+            color: #fff;
+            box-shadow: 0 0 15px #00eaff;
+        }
+
+        .option.wrong {
+            background: linear-gradient(90deg, #ff5252, #d81b60);
+            color: #fff;
+            box-shadow: 0 0 15px #ff5252;
+        }
+
+        .lamp {
+            display: none;
+            margin-left: 15px;
+            cursor: pointer;
+            font-size: 1.5em;
+            color: #ffd700;
+            text-shadow: 0 0 10px #ffd700;
+            transition: transform 0.3s ease;
+        }
+
+        .lamp:hover {
+            transform: scale(1.2);
+        }
+
+        .explanation {
+            margin-top: 15px;
+            font-style: italic;
+            color: #f0f0f0;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 10px;
+            border-radius: 5px;
+            display: none;
+            animation: slideIn 0.5s ease;
+            font-size: 1.1em;
+            line-height: 1.5;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin: 20px 0;
+        }
+
+        .nav-button {
+            padding: 12px 25px;
+            background: linear-gradient(45deg, #ffd700, #ffaa00);
+            color: #1a1a2e;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1.2em;
+            box-shadow: 0 0 10px #ffd700;
+            transition: all 0.3s ease;
+            font-weight: bold;
+        }
+
+        .nav-button:disabled {
+            background: #666;
+            color: #ccc;
+            box-shadow: none;
+            cursor: not-allowed;
+        }
+
+        .nav-button:hover:not(:disabled) {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px #ffd700;
+        }
+
+        button#submit {
+            display: block;
+            width: 250px;
+            margin: 20px auto;
+            padding: 15px;
+            background: linear-gradient(45deg, #00eaff, #00b8d4);
+            color: #1a1a2e;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1.3em;
+            box-shadow: 0 0 15px #00eaff;
+            transition: all 0.3s ease;
+            font-weight: bold;
+        }
+
+        button#submit:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 25px #00eaff;
+        }
+
+        #result {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 1.8em;
+            color: #ffd700;
+            text-shadow: 0 0 10px #ffd700;
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <h1>Simulazione Concorso Operatore Socio Sanitario - Modulo 20</h1>
+        <div class="question-nav" id="questionNav"></div>
+        <div id="timer">Tempo rimanente: <span id="time">30:00</span></div>
+        <div id="quiz"></div>
+        <div class="navigation">
+            <button class="nav-button" id="prev" disabled>⬅ Indietro</button>
+            <button class="nav-button" id="next">Avanti ➡</button>
+        </div>
+        <button id="submit">Invia Risposte</button>
+        <div id="result"></div>
+    </div>
+
+    <script>
+        // Array di domande (571-600) simulate, uniche rispetto ai Moduli 1-19
+        const questions = [
+            {
+                question: "Per prevenire infortuni sul lavoro, l’OSS deve:",
+                options: [
+                    "usare tecniche di sollevamento corrette",
+                    "sollevare pesi senza ausili",
+                    "ignorare la postura"
+                ],
+                correct: "usare tecniche di sollevamento corrette",
+                explanation: "Le tecniche di sollevamento corrette (es. piegamento delle ginocchia) prevengono infortuni. L’OSS deve usare ausili meccanici, mantenere una postura corretta, e segnalare al responsabile rischi ergonomici."
+            },
+            {
+                question: "Quale tra i seguenti è un segno di sovraccarico lombare?",
+                options: [
+                    "dolore alla schiena",
+                    "movimenti fluidi",
+                    "energia elevata"
+                ],
+                correct: "dolore alla schiena",
+                explanation: "Il dolore alla schiena indica sovraccarico lombare. L’OSS deve evitare sollevamenti scorretti, usare sollevatori, e segnalare al responsabile eventuali infortuni."
+            },
+            {
+                question: "La gestione dei rifiuti sanitari pericolosi include:",
+                options: [
+                    "smaltimento in contenitori dedicati",
+                    "smaltimento nei rifiuti comuni",
+                    "accumulo in reparto"
+                ],
+                correct: "smaltimento in contenitori dedicati",
+                explanation: "I rifiuti sanitari pericolosi richiedono contenitori dedicati per prevenire infezioni. L’OSS deve usare DPI, seguire i protocolli, e segnalare al responsabile violazioni."
+            },
+            {
+                question: "Quale tra i seguenti è un segno di gestione scorretta dei rifiuti?",
+                options: [
+                    "contenitori non sigillati",
+                    "contenitori chiusi",
+                    "rifiuti assenti"
+                ],
+                correct: "contenitori non sigillati",
+                explanation: "Contenitori non sigillati indicano gestione scorretta. L’OSS deve sigillare i contenitori, usare DPI, e segnalare al responsabile problemi di smaltimento."
+            },
+            {
+                question: "Per prevenire infezioni sul lavoro, l’OSS deve:",
+                options: [
+                    "lavarsi le mani regolarmente",
+                    "evitare il lavaggio delle mani",
+                    "ignorare i DPI"
+                ],
+                correct: "lavarsi le mani regolarmente",
+                explanation: "Il lavaggio regolare delle mani previene infezioni nosocomiali. L’OSS deve seguire le linee guida, usare DPI, e segnalare al responsabile carenze di materiali."
+            },
+            {
+                question: "Quale tra i seguenti è un segno di scarsa igiene delle mani?",
+                options: [
+                    "residui sotto le unghie",
+                    "mani pulite",
+                    "cute idratata"
+                ],
+                correct: "residui sotto le unghie",
+                explanation: "Residui sotto le unghie indicano scarsa igiene. L’OSS deve lavarsi le mani accuratamente, usare spazzolini, e segnalare al responsabile problemi di igiene."
+            },
+            {
+                question: "La gestione dei dispositivi di protezione individuale (DPI) include:",
+                options: [
+                    "uso corretto e smaltimento sicuro",
+                    "riutilizzo dei DPI monouso",
+                    "conservazione in luoghi umidi"
+                ],
+                correct: "uso corretto e smaltimento sicuro",
+                explanation: "I DPI richiedono uso corretto e smaltimento sicuro per prevenire infezioni. L’OSS deve indossarli adeguatamente e segnalare al responsabile carenze."
+            },
+            {
+                question: "Quale tra i seguenti è un segno di uso scorretto dei DPI?",
+                options: [
+                    "mascherina sotto il naso",
+                    "guanti ben indossati",
+                    "DPI integri"
+                ],
+                correct: "mascherina sotto il naso",
+                explanation: "Una mascherina sotto il naso indica uso scorretto. L’OSS deve indossare i DPI correttamente, verificarne l’integrità, e segnalare al responsabile problemi."
+            },
+            {
+                question: "Per prevenire cadute sul lavoro, l’OSS deve:",
+                options: [
+                    "mantenere i pavimenti asciutti",
+                    "lasciare cavi sparsi",
+                    "ignorare gli ostacoli"
+                ],
+                correct: "mantenere i pavimenti asciutti",
+                explanation: "Pavimenti asciutti prevengono cadute. L’OSS deve rimuovere ostacoli, segnalare pavimenti bagnati, e segnalare al responsabile rischi ambientali."
+            },
+            {
+                question: "Quale tra i seguenti è un segno di rischio di caduta sul lavoro?",
+                options: [
+                    "pavimento bagnato",
+                    "pavimento asciutto",
+                    "superfici ordinate"
+                ],
+                correct: "pavimento bagnato",
+                explanation: "Un pavimento bagnato indica rischio di caduta. L’OSS deve asciugare il pavimento, posizionare cartelli, e segnalare al responsabile."
+            },
+            {
+                question: "La gestione delle attrezzature sanitarie include:",
+                options: [
+                    "controllo della funzionalità",
+                    "uso senza manutenzione",
+                    "ignorare i guasti"
+                ],
+                correct: "controllo della funzionalità",
+                explanation: "Le attrezzature sanitarie richiedono controllo della funzionalità per garantire sicurezza. L’OSS deve verificare gli strumenti e segnalare al responsabile guasti."
+            },
+            {
+                question: "Quale tra i seguenti è un segno di attrezzatura difettosa?",
+                options: [
+                    "rumori anomali",
+                    "funzionamento regolare",
+                    "manutenzione recente"
+                ],
+                correct: "rumori anomali",
+                explanation: "Rumori anomali indicano attrezzatura difettosa. L’OSS deve sospendere l’uso, segnalare al responsabile, e garantire la sicurezza del paziente."
+            },
+            {
+                question: "Per prevenire esposizione a sostanze chimiche, l’OSS deve:",
+                options: [
+                    "usare DPI e ventilazione",
+                    "manipolare senza DPI",
+                    "ignorare le etichette"
+                ],
+                correct: "usare DPI e ventilazione",
+                explanation: "L’esposizione a sostanze chimiche richiede DPI e ventilazione adeguata. L’OSS deve seguire i protocolli, etichettare i contenitori, e segnalare al responsabile rischi."
+            },
+            {
+                question: "Quale tra i seguenti è un segno di esposizione a sostanze chimiche?",
+                options: [
+                    "irritazione cutanea",
+                    "cute integra",
+                    "respirazione regolare"
+                ],
+                correct: "irritazione cutanea",
+                explanation: "L’irritazione cutanea indica esposizione a sostanze chimiche. L’OSS deve lavare la zona, usare DPI, e segnalare al responsabile l’incidente."
+            },
+            {
+                question: "La gestione delle emergenze sul lavoro include:",
+                options: [
+                    "conoscenza delle vie di fuga",
+                    "ignorare le procedure",
+                    "bloccare le uscite"
+                ],
+                correct: "conoscenza delle vie di fuga",
+                explanation: "Le emergenze richiedono conoscenza delle vie di fuga e delle procedure. L’OSS deve partecipare alle esercitazioni e segnalare al responsabile ostacoli alle uscite."
+            },
+            {
+                question: "Quale tra i seguenti è un segno di rischio in emergenza?",
+                options: [
+                    "uscite ostruite",
+                    "uscite libere",
+                    "procedure chiare"
+                ],
+                correct: "uscite ostruite",
+                explanation: "Uscite ostruite indicano rischio in emergenza. L’OSS deve mantenere le vie libere, segnalare ostacoli, e garantire la sicurezza."
+            },
+            {
+                question: "Per prevenire stress lavorativo, l’OSS deve:",
+                options: [
+                    "gestire il tempo e chiedere supporto",
+                    "ignorare il carico di lavoro",
+                    "lavorare senza pause"
+                ],
+                correct: "gestire il tempo e chiedere supporto",
+                explanation: "Lo stress lavorativo richiede gestione del tempo e supporto dai colleghi. L’OSS deve prendersi pause, comunicare difficoltà, e segnalare al responsabile sovraccarichi."
+            },
+            {
+                question: "Quale tra i seguenti è un segno di stress lavorativo?",
+                options: [
+                    "irritabilità e stanchezza",
+                    "concentrazione elevata",
+                    "umore stabile"
+                ],
+                correct: "irritabilità e stanchezza",
+                explanation: "Irritabilità e stanchezza indicano stress lavorativo. L’OSS deve gestire lo stress, chiedere supporto, e segnalare al responsabile problemi prolungati."
+            },
+            {
+                question: "La gestione della sicurezza elettrica sul lavoro include:",
+                options: [
+                    "controllo dei cavi elettrici",
+                    "uso di cavi danneggiati",
+                    "ignorare i dispositivi"
+                ],
+                correct: "controllo dei cavi elettrici",
+                explanation: "La sicurezza elettrica richiede controllo dei cavi per prevenire incidenti. L’OSS deve verificare i dispositivi, evitare cavi danneggiati, e segnalare al responsabile guasti."
+            },
+            {
+                question: "Quale tra i seguenti è un segno di rischio elettrico?",
+                options: [
+                    "cavi scoperti",
+                    "cavi isolati",
+                    "dispositivi funzionanti"
+                ],
+                correct: "cavi scoperti",
+                explanation: "Cavi scoperti indicano rischio elettrico. L’OSS deve sospendere l’uso, segnalare al responsabile, e garantire la sicurezza."
+            },
+            {
+                question: "Per prevenire incidenti con aghi, l’OSS deve:",
+                options: [
+                    "usare contenitori per taglienti",
+                    "gettare aghi nei rifiuti comuni",
+                    "ricoprire gli aghi"
+                ],
+                correct: "usare contenitori per taglienti",
+                explanation: "Gli incidenti con aghi si prevengono usando contenitori per taglienti. L’OSS deve evitare ricoperture, usare DPI, e segnalare al responsabile esposizioni."
+            },
+            {
+                question: "Quale tra i seguenti è un segno di gestione scorretta degli aghi?",
+                options: [
+                    "aghi fuori dai contenitori",
+                    "contenitori sigillati",
+                    "smaltimento regolare"
+                ],
+                correct: "aghi fuori dai contenitori",
+                explanation: "Aghi fuori dai contenitori indicano gestione scorretta. L’OSS deve smaltire correttamente, usare DPI, e segnalare al responsabile."
+            },
+            {
+                question: "La gestione della sicurezza in reparto include:",
+                options: [
+                    "controllo delle sponde dei letti",
+                    "sponde abbassate senza motivo",
+                    "ignorare i dispositivi"
+                ],
+                correct: "controllo delle sponde dei letti",
+                explanation: "La sicurezza in reparto richiede controllo delle sponde per prevenire cadute. L’OSS deve verificare i dispositivi e segnalare al responsabile malfunzionamenti."
+            },
+            {
+                question: "Quale tra i seguenti è un segno di rischio in reparto?",
+                options: [
+                    "sponde malfunzionanti",
+                    "sponde funzionanti",
+                    "letti stabili"
+                ],
+                correct: "sponde malfunzionanti",
+                explanation: "Sponde malfunzionanti indicano rischio. L’OSS deve segnalare al responsabile, garantire la sicurezza del paziente, e usare dispositivi alternativi."
+            },
+            {
+                question: "Per prevenire infezioni crociate, l’OSS deve:",
+                options: [
+                    "usare DPI per ogni paziente",
+                    "riutilizzare i guanti",
+                    "ignorare i protocolli"
+                ],
+                correct: "usare DPI per ogni paziente",
+                explanation: "Le infezioni crociate si prevengono usando DPI nuovi per ogni paziente. L’OSS deve cambiare i guanti, seguire i protocolli, e segnalare al responsabile violazioni."
+            },
+            {
+                question: "Quale tra i seguenti è un segno di rischio di infezione crociata?",
+                options: [
+                    "riutilizzo dei DPI",
+                    "DPI nuovi per ogni paziente",
+                    "protocolli rispettati"
+                ],
+                correct: "riutilizzo dei DPI",
+                explanation: "Il riutilizzo dei DPI indica rischio di infezione crociata. L’OSS deve usare DPI nuovi, seguire i protocolli, e segnalare al responsabile."
+            },
+            {
+                question: "La gestione della sicurezza durante i trasferimenti include:",
+                options: [
+                    "uso di ausili adeguati",
+                    "trasferimenti senza supporto",
+                    "ignorare i rischi"
+                ],
+                correct: "uso di ausili adeguati",
+                explanation: "La sicurezza nei trasferimenti richiede ausili adeguati (es. sollevatori). L’OSS deve assistere il paziente, evitare movimenti bruschi, e segnalare al responsabile rischi."
+            },
+            {
+                question: "Quale tra i seguenti è un segno di trasferimento non sicuro?",
+                options: [
+                    "mancanza di ausili",
+                    "uso di sollevatori",
+                    "paziente stabile"
+                ],
+                correct: "mancanza di ausili",
+                explanation: "La mancanza di ausili indica trasferimento non sicuro. L’OSS deve usare dispositivi adeguati, garantire la sicurezza, e segnalare al responsabile."
+            },
+            {
+                question: "Per prevenire incendi sul lavoro, l’OSS deve:",
+                options: [
+                    "conoscere l’uso degli estintori",
+                    "ignorare i materiali infiammabili",
+                    "bloccare le uscite"
+                ],
+                correct: "conoscere l’uso degli estintori",
+                explanation: "La prevenzione degli incendi richiede conoscenza degli estintori e delle procedure. L’OSS deve mantenere le uscite libere e segnalare al responsabile rischi."
+            },
+            {
+                question: "Quale tra i seguenti è un segno di rischio di incendio?",
+                options: [
+                    "materiali infiammabili accumulati",
+                    "uscite libere",
+                    "estintori funzionanti"
+                ],
+                correct: "materiali infiammabili accumulati",
+                explanation: "Materiali infiammabili accumulati indicano rischio di incendio. L’OSS deve rimuovere i materiali, segnalare al responsabile, e garantire la sicurezza."
+            },
+            {
+                question: "La gestione della sicurezza nei turni notturni include:",
+                options: [
+                    "illuminazione adeguata",
+                    "lavorare al buio",
+                    "ignorare i rischi"
+                ],
+                correct: "illuminazione adeguata",
+                explanation: "La sicurezza nei turni notturni richiede illuminazione adeguata per prevenire incidenti. L’OSS deve controllare le luci, segnalare guasti, e garantire la visibilità."
+            },
+            {
+                question: "Quale tra i seguenti è un segno di rischio nei turni notturni?",
+                options: [
+                    "illuminazione scarsa",
+                    "luci funzionanti",
+                    "ambiente ordinato"
+                ],
+                correct: "illuminazione scarsa",
+                explanation: "L’illuminazione scarsa indica rischio nei turni notturni. L’OSS deve segnalare guasti, usare luci ausiliarie, e garantire la sicurezza."
+            }
+        ];
+
+        let currentQuestion = 0;
+
+        // Carica i quadratini di navigazione
+        function loadQuestionNav() {
+            const navDiv = document.getElementById("questionNav");
+            questions.forEach((_, index) => {
+                const box = document.createElement("div");
+                box.classList.add("question-box");
+                box.textContent = index + 1;
+                box.addEventListener("click", () => {
+                    showQuestion(index);
+                });
+                navDiv.appendChild(box);
+            });
+        }
+
+        // Carica il quiz
+        function loadQuiz() {
+            const quizDiv = document.getElementById("quiz");
+            questions.forEach((q, index) => {
+                const questionDiv = document.createElement("div");
+                questionDiv.classList.add("question");
+                questionDiv.id = `question-${index}`;
+                questionDiv.innerHTML = `
+                    <h3>${index + 571}. ${q.question}</h3>
+                    ${q.options.map((opt, i) => `
+                        <div class="option" data-value="${opt}">
+                            <input type="radio" name="q${index}" value="${opt}" id="q${index}_${i}">
+                            <label for="q${index}_${i}">${opt}</label>
+                            <span class="lamp" id="lamp-${index}-${i}">💡</span>
+                        </div>
+                    `).join("")}
+                    <div class="explanation" id="exp-${index}">${q.explanation}</div>
+                `;
+                quizDiv.appendChild(questionDiv);
+
+                const radios = questionDiv.querySelectorAll(`input[name="q${index}"]`);
+                radios.forEach(radio => {
+                    radio.addEventListener("change", () => {
+                        document.querySelectorAll(".question-box")[index].classList.add("answered");
+                    });
+                });
+            });
+            showQuestion(0);
+        }
+
+        // Mostra la domanda corrente
+        function showQuestion(index) {
+            document.querySelectorAll(".question").forEach(q => q.classList.remove("active"));
+            document.getElementById(`question-${index}`).classList.add("active");
+            currentQuestion = index;
+            document.getElementById("prev").disabled = currentQuestion === 0;
+            document.getElementById("next").disabled = currentQuestion === questions.length - 1;
+        }
+
+        // Timer (30 minuti)
+        let timeLeft = 30 * 60;
+        function startTimer() {
+            const timer = setInterval(() => {
+                timeLeft--;
+                const minutes = Math.floor(timeLeft / 60);
+                const seconds = timeLeft % 60;
+                document.getElementById("time").textContent = 
+                    `${minutes}:${seconds < 10 ? "0" + seconds : seconds}`;
+                if (timeLeft <= 0) {
+                    clearInterval(timer);
+                    checkAnswers();
+                }
+            }, 1000);
+        }
+
+        // Controllo risposte e feedback visivo
+        function checkAnswers() {
+            let score = 0;
+            questions.forEach((q, index) => {
+                const selected = document.querySelector(`input[name="q${index}"]:checked`);
+                const options = document.querySelectorAll(`#question-${index} .option`);
+                options.forEach(option => {
+                    const value = option.getAttribute("data-value");
+                    if (value === q.correct) {
+                        option.classList.add("correct");
+                        const lamp = option.querySelector(".lamp");
+                        lamp.style.display = "inline";
+                        lamp.addEventListener("click", () => {
+                            const explanation = document.getElementById(`exp-${index}`);
+                            explanation.style.display = "block";
+                        });
+                    }
+                });
+                if (selected) {
+                    if (selected.value === q.correct) {
+                        score++;
+                    } else {
+                        selected.parentElement.classList.add("wrong");
+                    }
+                }
+            });
+            const resultDiv = document.getElementById("result");
+            resultDiv.textContent = `Punteggio: ${score} / ${questions.length}`;
+            document.getElementById("submit").disabled = true;
+            document.getElementById("prev").disabled = true;
+            document.getElementById("next").disabled = true;
+            document.querySelectorAll("input[type=radio]").forEach(radio => {
+                radio.disabled = true;
+            });
+        }
+
+        // Inizializzazione
+        window.onload = () => {
+            loadQuestionNav();
+            loadQuiz();
+            startTimer();
+            document.getElementById("prev").addEventListener("click", () => {
+                if (currentQuestion > 0) showQuestion(currentQuestion - 1);
+            });
+            document.getElementById("next").addEventListener("click", () => {
+                if (currentQuestion < questions.length - 1) showQuestion(currentQuestion + 1);
+            });
+            document.getElementById("submit").addEventListener("click", () => {
+                if (confirm("Sei sicuro di voler inviare le risposte?")) {
+                    checkAnswers();
+                }
+            });
+        };
+    </script>
+</body>
+</html>
